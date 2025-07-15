@@ -1,10 +1,14 @@
+import Link from "next/link";
 import MessageLeftSide from "./message-left-side";
 import MessageRightSide from "./message-right-side";
 
-const Message = () => {
+const MessageComponent = () => {
   return (
     <div className="message-wrapper">
       <div className="receiver-detail">
+        <div className="back-button-container">
+          <Link href="/dashboard">Back</Link>
+        </div>
         <div className="name">Bruce</div>
         <div className="status"></div>
       </div>
@@ -26,4 +30,4 @@ const Message = () => {
   );
 };
 
-export default Message;
+export default MessageComponent;

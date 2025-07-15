@@ -25,6 +25,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Signin */
+.signin-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  height: 100vb;
+}
+.signin-wrapper button {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid white;
+  border-radius: 15px;
+  padding: 1em 1.5em;
+  cursor: pointer;
+}
+.signin-wrapper button:active {
+  transform: scale(0.95);
+}
+
 /* Dashboard */
 .dashboard {
   display: flex;
@@ -84,6 +107,13 @@ body {
   justify-content: center;
   align-items: center;
   gap: 5px;
+  position: relative;
+}
+.message-page .message-wrapper .receiver-detail .back-button-container {
+  position: absolute;
+  left: 1em;
+  text-decoration: underline;
+  text-transform: lowercase;
 }
 .message-page .message-wrapper .receiver-detail .status {
   width: 10px;

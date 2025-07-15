@@ -3,6 +3,7 @@
 import MessagesCard from "../components/messages-card";
 
 const Dashboard = () => {
+  const name = "Joshua Philip Unilongo";
   const logout = async () => {
     console.log("You clicked the logout buttton");
   };
@@ -10,7 +11,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="message-wrapper">
         <div className="message-title">
-          <p>Messages</p>
+          <p>{name}</p>
         </div>
         <MessagesCard />
         <MessagesCard />

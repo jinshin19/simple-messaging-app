@@ -1,0 +1,25 @@
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import { config } from "dotenv";
+import http from "http";
+config();
+import "./auth/google.auth.js";
+
+import authRouter from "./routes/auth.routes.js";
+
+const PORT = process.env.SIMPLE_MESSAGING_APP_PORT || 4000;
+const app = express();
+const server = http.createServer(app);
+server.listen(PORT, console.log(`Server is running at port ${PORT}`));
+app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  })
+);
+
+app.use("/api", authRouter);
