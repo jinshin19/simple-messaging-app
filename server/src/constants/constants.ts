@@ -1,4 +1,8 @@
 export const JWT = {
+  NORMALIZE: {
+    ACCESS_TOKEN: "accessToken",
+    REFRESH_TOKEN: "refreshToken",
+  },
   TYPE: {
     ACCESS_TOKEN: "access_token",
     REFRESH_TOKEN: "refresh_token",
@@ -6,6 +10,13 @@ export const JWT = {
   STATUS: {
     SUCCESS: "success",
     ERROR: "error",
+  },
+  EXPIRESIN: {
+    ACCESS_TOKEN_EXPIRATION: "10m",
+    REFRESH_TOKEN_EXPIRATION: "30m",
+  },
+  COMMON: {
+    NO_TOKENS: "No tokens found",
   },
 };
 

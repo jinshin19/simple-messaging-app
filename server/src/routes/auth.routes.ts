@@ -1,13 +1,14 @@
 import { Router } from "express";
 import passport from "passport";
-import { database } from "../database/database.js";
+import { database } from "../database/database";
 import { v4 as uuid } from "uuid";
-import { validateAuthorization } from "../controllers/auth.controller.js";
+import { validateAuthorization } from "../controllers/auth.controller";
 import {
   generateAccessToken,
   generateCookie,
   generateRefreshToken,
-} from "../helper/helper.js";
+} from "../helper/helper";
+import { JWT } from "../constants/constants";
 
 const router = Router();
 
@@ -24,7 +25,7 @@ router.get(
   }),
   async (req, res) => {
     try {
-      const user = req.user;
+      const user: any = req.user;
       const raw = JSON.parse(user?._raw);
       const refreshTokenResult = generateRefreshToken({
         email: raw?.email,
@@ -56,7 +57,12 @@ router.get(
         });
       }
 
-      generateCookie(res, "refreshToken", refreshToken);
+      generateCookie({
+        res,
+        value_name: JWT.NORMALIZE.REFRESH_TOKEN,
+        value: refreshToken,
+        maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
+      });
 
       // Used to development only to pass this in postman
       console.log("refreshToken", refreshToken);
