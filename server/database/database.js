@@ -1,4 +1,5 @@
 import mysql2 from "mysql2/promise";
+import { DATABASE } from "../constants/constants.js";
 
 const mysqlPool = mysql2.createPool({
   user: process.env.SIMPLE_MESSAGING_APP_DATABASE_USER,
@@ -18,7 +19,10 @@ export const database = async (script, values) => {
       file_path: "database.js",
       message: error,
     });
-    throw new Error(error);
+    const databaseErrorResult = DATABASE.ERRORS.filter(
+      (err) => err.CODE == error?.code && err.ERRNO == error?.errno
+    );
+    throw Object.assign(databaseErrorResult[0]);
   } finally {
     await connection.release();
   }
