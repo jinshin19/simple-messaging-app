@@ -5,14 +5,14 @@ import passport from "passport";
 import { config } from "dotenv";
 import http from "http";
 config();
-import "./auth/google.auth.js";
+import "./auth/google.auth";
 
-import authRouter from "./routes/auth.routes.js";
+import authRouter from "./routes/auth.routes";
 
 const PORT = process.env.SIMPLE_MESSAGING_APP_PORT || 4000;
 const app = express();
 const server = http.createServer(app);
-server.listen(PORT, console.log(`Server is running at port ${PORT}`));
+server.listen(PORT, () => console.log(`Server is running at port ${PORT}`));
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
