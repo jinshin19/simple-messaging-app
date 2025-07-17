@@ -2,6 +2,12 @@ import { Router } from "express";
 import passport from "passport";
 import { database } from "../database/database.js";
 import { v4 as uuid } from "uuid";
+import { validateAuthorization } from "../controllers/auth.controller.js";
+import {
+  generateAccessToken,
+  generateCookie,
+  generateRefreshToken,
+} from "../helper/helper.js";
 
 const router = Router();
 
@@ -20,6 +26,14 @@ router.get(
     try {
       const user = req.user;
       const raw = JSON.parse(user?._raw);
+      const refreshTokenResult = generateRefreshToken({
+        email: raw?.email,
+      });
+      const accessTokenResult = generateAccessToken({
+        email: raw?.email,
+      });
+      const accessToken = accessTokenResult.data?.accessToken ?? null;
+      const refreshToken = refreshTokenResult.data?.refreshToken ?? null;
 
       const result = await database(
         "insert into users (user_id, given_name, family_name, picture, email, is_verified, refresh_token) values (?, ?, ?, ?, ?, ?, ?)",
@@ -30,7 +44,7 @@ router.get(
           raw?.picture,
           raw?.email,
           raw?.is_verified,
-          "dawdadadasw",
+          refreshToken,
         ]
       );
 
@@ -42,18 +56,34 @@ router.get(
         });
       }
 
-      res.status(200).send({
+      generateCookie(res, "refreshToken", refreshToken);
+
+      // Used to development only to pass this in postman
+      console.log("refreshToken", refreshToken);
+      // ------------------------------------------------
+
+      return res.status(200).send({
         ok: true,
-        data: null,
+        data: {
+          accessToken,
+        },
         message: "Signed in successfully",
       });
     } catch (error) {
       console.log("Error found:", {
         file_path: "auth.routes.js",
+        method: "auth/google/callback",
         message: error,
+      });
+      return res.status(400).send({
+        ok: false,
+        data: null,
+        message: "Failed to sign-in email might be used already",
       });
     }
   }
 );
+
+router.get("/auth/validate/tokens", validateAuthorization);
 
 export default router;
