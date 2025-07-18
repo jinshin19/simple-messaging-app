@@ -29,6 +29,10 @@ export interface validateTokenI {
   token: string;
 }
 
+export interface extractTokenDataI {
+  token: string;
+}
+
 export interface validateTokensI {
   accessToken: string | null | undefined;
   refreshToken: string | null | undefined;
@@ -39,4 +43,10 @@ export interface generateCookieI {
   value_name: string;
   value: string;
   maxAge: string | number | null;
+}
+
+export interface tokenResult {
+  user_id: string;
+  iat: number;
+  exp: number;
 }

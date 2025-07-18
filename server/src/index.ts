@@ -8,6 +8,7 @@ config();
 import "./auth/google.auth";
 
 import authRouter from "./routes/auth.routes";
+import messagesRouter from "./routes/messages.routes";
 
 const PORT = process.env.SIMPLE_MESSAGING_APP_PORT || 4000;
 const app = express();
@@ -23,3 +24,4 @@ app.use(
 );
 
 app.use("/api", authRouter);
+app.use("/api", messagesRouter);
