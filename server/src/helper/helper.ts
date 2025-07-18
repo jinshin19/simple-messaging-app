@@ -1,16 +1,19 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "dotenv";
 config();
 import { JWT } from "../constants/constants";
 import {
   CustomTokenResponseI,
   CustomTokenSuccessParameterI,
+  extractTokenDataI,
   generateCookieI,
   status_type_enum,
   token_type_enum,
   validateTokenI,
   validateTokensI,
 } from "./typesAndInterfaces";
+import { v4 as uuid } from "uuid";
+import { Request } from "express";
 
 const customTokenSuccess = <T>({
   type,
@@ -68,6 +71,19 @@ export const generateAccessToken = <T>(data: NonNullable<T>) => {
   }
 };
 
+export const getAccessToken = (req: Request) => {
+  const headers = req.headers;
+  const authorization = headers?.authorization ?? null;
+  const accessToken = authorization?.replace("Bearer ", "") ?? null;
+  return accessToken;
+};
+
+export const getRefreshToken = (req: Request) => {
+  const cookies = req.cookies;
+  const refreshToken = cookies?.refreshToken ?? null;
+  return refreshToken;
+};
+
 export const generateRefreshToken = <T>(data: NonNullable<T>) => {
   try {
     const refreshToken = jwt.sign(
@@ -102,7 +118,7 @@ export const validateToken = ({ type, token }: validateTokenI) => {
         type: token_type_enum.ACCESS_TOKEN,
         data: token,
         message: null,
-        forSignData: verfiedToken?.email,
+        forSignData: verfiedToken?.user_id,
       });
     }
     if (type === JWT.TYPE.REFRESH_TOKEN) {
@@ -110,9 +126,28 @@ export const validateToken = ({ type, token }: validateTokenI) => {
         type: token_type_enum.REFRESH_TOKEN,
         data: token,
         message: null,
-        forSignData: verfiedToken?.email,
+        forSignData: verfiedToken?.user_id,
       });
     }
+  } catch (error) {
+    console.log("Error found:", {
+      file_path: "helper.js",
+      method: "validateToken",
+      message: error,
+    });
+    return customTokenError();
+  }
+};
+
+export const extractTokenData = ({
+  token,
+}: extractTokenDataI): JwtPayload | null => {
+  try {
+    const decodedToken: JwtPayload | null = jwt.decode(token, {
+      complete: false,
+      json: true,
+    });
+    return decodedToken;
   } catch (error) {
     console.log("Error found:", {
       file_path: "helper.js",
@@ -150,7 +185,7 @@ export const validateTokens = ({
         return verifyRefreshToken;
       } else {
         const generatedAccessToken = generateAccessToken({
-          email: verifyRefreshToken?.forSignData,
+          user_id: verifyRefreshToken?.forSignData,
         });
         return customTokenSuccess({
           type: token_type_enum.REFRESH_TOKEN,
@@ -177,7 +212,7 @@ export const validateTokens = ({
     });
 
     const generatedAccessToken = generateAccessToken({
-      email: verifyRefreshToken?.forSignData,
+      user_id: verifyRefreshToken?.forSignData,
     });
 
     if (verifyRefreshToken?.status === JWT.STATUS.SUCCESS) {
@@ -209,4 +244,8 @@ export const generateCookie = ({
         ? parseInt(maxAge)
         : maxAge,
   });
+};
+
+export const generateUUID = () => {
+  return uuid();
 };

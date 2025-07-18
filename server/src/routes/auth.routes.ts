@@ -1,5 +1,5 @@
 import { Router } from "express";
-import passport from "passport";
+import passport, { use } from "passport";
 import { database } from "../database/database";
 import { v4 as uuid } from "uuid";
 import { validateAuthorization } from "../controllers/auth.controller";
@@ -7,6 +7,7 @@ import {
   generateAccessToken,
   generateCookie,
   generateRefreshToken,
+  validateToken,
 } from "../helper/helper";
 import { JWT } from "../constants/constants";
 
@@ -27,11 +28,60 @@ router.get(
     try {
       const user: any = req.user;
       const raw = JSON.parse(user?._raw);
+
+      const isAlreadyRegistered = await database(
+        "select * from users where email = ? and is_verified = ?",
+        [raw?.email, raw?.email_verified]
+      );
+
+      if (isAlreadyRegistered.length > 0) {
+        const validatedToken = validateToken({
+          type: "refresh_token",
+          token: isAlreadyRegistered[0]?.refresh_token,
+        });
+
+        const accessToken = generateAccessToken({
+          user_id: isAlreadyRegistered[0]?.user_id,
+        });
+
+        const refreshToken =
+          validatedToken?.status === "error"
+            ? generateRefreshToken({
+                user_id: isAlreadyRegistered[0]?.user_id,
+              }).data?.refreshToken
+            : isAlreadyRegistered[0]?.refresh_token;
+
+        if (validatedToken?.status === "error") {
+          await database(
+            "update users set refresh_token = ? where user_id = ?",
+            [refreshToken, isAlreadyRegistered[0]?.user_id]
+          );
+        }
+
+        // Used to development only to pass this in postman
+        console.log("sign in refreshToken", refreshToken);
+        // ------------------------------------------------
+
+        generateCookie({
+          res,
+          value_name: JWT.NORMALIZE.REFRESH_TOKEN,
+          value: refreshToken,
+          maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
+        });
+
+        return res.status(200).send({
+          ok: true,
+          data: accessToken?.data,
+          message: "Signed in successfully",
+        });
+      }
+
+      const user_id = uuid();
       const refreshTokenResult = generateRefreshToken({
-        email: raw?.email,
+        user_id,
       });
       const accessTokenResult = generateAccessToken({
-        email: raw?.email,
+        user_id,
       });
       const accessToken = accessTokenResult.data?.accessToken ?? null;
       const refreshToken = refreshTokenResult.data?.refreshToken ?? null;
@@ -39,12 +89,12 @@ router.get(
       const result = await database(
         "insert into users (user_id, given_name, family_name, picture, email, is_verified, refresh_token) values (?, ?, ?, ?, ?, ?, ?)",
         [
-          uuid(),
+          user_id,
           raw?.given_name,
           raw?.family_name,
           raw?.picture,
           raw?.email,
-          raw?.is_verified,
+          raw?.email_verified,
           refreshToken,
         ]
       );
@@ -65,7 +115,7 @@ router.get(
       });
 
       // Used to development only to pass this in postman
-      console.log("refreshToken", refreshToken);
+      console.log("sign up refreshToken", refreshToken);
       // ------------------------------------------------
 
       return res.status(200).send({
@@ -73,7 +123,7 @@ router.get(
         data: {
           accessToken,
         },
-        message: "Signed in successfully",
+        message: "Signed up successfully",
       });
     } catch (error) {
       console.log("Error found:", {

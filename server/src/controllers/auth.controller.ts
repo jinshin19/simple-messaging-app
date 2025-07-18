@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
-import { validateTokens } from "../helper/helper";
+import {
+  getAccessToken,
+  getRefreshToken,
+  validateTokens,
+} from "../helper/helper";
 import { JWT } from "../constants/constants";
 
 export const validateAuthorization = async (req: Request, res: Response) => {
   try {
-    const headers: Headers | any = req.headers;
-    const authorization = headers?.authorization ?? null;
-    const accessToken = authorization?.replace("Bearer ", "") ?? null;
-    const cookies = req.cookies;
-    const refreshToken = cookies?.refreshToken ?? null;
+    const accessToken = getAccessToken(req);
+    const refreshToken = getRefreshToken(req);
 
     const validatedTokens = validateTokens({ accessToken, refreshToken });
 
