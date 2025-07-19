@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { database } from "../database/database";
-import { extractTokenData, getAccessToken } from "../helper/helper";
+import { extractTokenData, getAccessToken } from "../helper/token.helper";
+import { API } from "../constants/api.contants";
+import { SCRIPTS } from "../scripts/users.script";
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
-    const result = await database("select * from messages", "");
-    return res.status(200).send({
+    const result = await database(SCRIPTS.MESSAGE.GET_ALL_MESSAGES, "");
+    return res.status(API.GET.SUCCESS.CODE).send({
       ok: true,
       data: result,
-      message: "Fetched sucessfully",
+      message: API.GET.SUCCESS.MESSAGE,
     });
   } catch (error) {
     console.log("Error found:", {
@@ -16,10 +18,10 @@ export const getMessages = async (req: Request, res: Response) => {
       method: "getMessages",
       message: error,
     });
-    return res.status(400).send({
+    return res.status(API.GET.ERROR.CODE).send({
       ok: false,
       data: null,
-      message: "Failed to fetch data",
+      message: API.GET.ERROR.MESSAGE,
     });
   }
 };
@@ -36,27 +38,14 @@ export const getMessage = async (req: Request, res: Response) => {
     const sender_id = extractedTokenData?.user_id ?? null;
 
     const conversation = await database(
-      `
-            select
-             messages.id as message_id,
-             messages.sender_id as sender_id,
-             messages.receiver_id as receiver_id,
-             sender.given_name as sender_name,
-             receiver.given_name as receiver_name,
-             messages.message as message
-            from messages 
-            join users sender on messages.sender_id = sender.user_id
-            join users receiver on messages.receiver_id = receiver.user_id 
-            where (messages.sender_id = ? and messages.receiver_id = ?) 
-            or (messages.sender_id = ? and messages.receiver_id = ?)
-        `,
+      SCRIPTS.MESSAGE.GET_ONE_ON_ONE_CONVERSATION,
       [sender_id, receiver_id, receiver_id, sender_id]
     );
 
-    return res.status(200).send({
+    return res.status(API.GET.SUCCESS.CODE).send({
       ok: true,
       data: conversation,
-      message: "Fetched sucessfully",
+      message: API.GET.SUCCESS.MESSAGE,
     });
   } catch (error) {
     console.log("Error found:", {
@@ -64,10 +53,10 @@ export const getMessage = async (req: Request, res: Response) => {
       method: "getMessage",
       message: error,
     });
-    return res.status(400).send({
+    return res.status(API.GET.ERROR.CODE).send({
       ok: false,
       data: null,
-      message: "Failed to fetch data",
+      message: API.GET.ERROR.MESSAGE,
     });
   }
 };
@@ -81,26 +70,24 @@ export const createMessage = async (req: Request, res: Response) => {
     const sender_id = extractedTokenData?.user_id ?? null;
     const body: createMessageI = req.body;
 
-    const result = await database(
-      `
-            insert into messages (sender_id, receiver_id, message)
-            values (?, ? , ?)
-        `,
-      [sender_id, body?.receiver_id, body?.message]
-    );
+    const result = await database(SCRIPTS.MESSAGE.SEND_MESSAGE, [
+      sender_id,
+      body?.receiver_id,
+      body?.message,
+    ]);
 
     if (result?.affectedRows <= 0) {
-      return res.status(400).send({
+      return res.status(API.POST.ERROR.CODE).send({
         ok: false,
         data: null,
-        message: "Failed to send the message",
+        message: API.POST.ERROR.MESSAGE,
       });
     }
 
-    return res.status(200).send({
+    return res.status(API.POST.SUCCESS.CODE).send({
       ok: true,
       data: null,
-      message: "Sent sucessfully",
+      message: API.POST.SUCCESS.MESSAGE,
     });
   } catch (error) {
     console.log("Error found:", {
@@ -108,10 +95,10 @@ export const createMessage = async (req: Request, res: Response) => {
       method: "getMessage",
       message: error,
     });
-    return res.status(400).send({
+    return res.status(API.POST.ERROR.CODE).send({
       ok: false,
       data: null,
-      message: "Failed to send the message",
+      message: API.POST.ERROR.MESSAGE,
     });
   }
 };

@@ -4,6 +4,7 @@ export enum token_type_enum {
   ACCESS_TOKEN = "access_token",
   REFRESH_TOKEN = "refresh_token",
 }
+
 export enum status_type_enum {
   SUCCESS = "success",
   ERROR = "error",
@@ -36,13 +37,6 @@ export interface extractTokenDataI {
 export interface validateTokensI {
   accessToken: string | null | undefined;
   refreshToken: string | null | undefined;
-}
-
-export interface generateCookieI {
-  res: any;
-  value_name: string;
-  value: string;
-  maxAge: string | number | null;
 }
 
 export interface tokenResult {
