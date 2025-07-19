@@ -3,8 +3,9 @@ import {
   getAccessToken,
   getRefreshToken,
   validateTokens,
-} from "../helper/helper";
+} from "../helper/token.helper";
 import { JWT } from "../constants/constants";
+import { API } from "../constants/api.contants";
 
 export const validateAuthorization = async (req: Request, res: Response) => {
   try {
@@ -14,10 +15,10 @@ export const validateAuthorization = async (req: Request, res: Response) => {
     const validatedTokens = validateTokens({ accessToken, refreshToken });
 
     if (validatedTokens?.status === JWT.STATUS.ERROR) {
-      return res.status(401).send({
+      return res.status(API.UNAUTHORIZED.CODE).send({
         ok: false,
         data: null,
-        message: "Unauthorized",
+        message: API.UNAUTHORIZED.MESSAGE,
       });
     }
 

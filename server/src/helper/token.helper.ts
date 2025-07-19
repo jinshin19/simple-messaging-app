@@ -1,53 +1,50 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "dotenv";
-config();
 import { JWT } from "../constants/constants";
 import {
-  CustomTokenResponseI,
-  CustomTokenSuccessParameterI,
   extractTokenDataI,
-  generateCookieI,
-  status_type_enum,
   token_type_enum,
   validateTokenI,
   validateTokensI,
-} from "./typesAndInterfaces";
-import { v4 as uuid } from "uuid";
+} from "../utils/types/token.types";
 import { Request } from "express";
+import { customTokenError, customTokenSuccess } from "../utils/token.util";
+config();
 
-const customTokenSuccess = <T>({
-  type,
-  data,
-  message,
-  forSignData,
-}: CustomTokenSuccessParameterI<T>): CustomTokenResponseI => {
-  const token =
-    type === JWT.TYPE.ACCESS_TOKEN
-      ? {
-          accessToken: data,
-        }
-      : {
-          refreshToken: data,
-        };
-
-  return {
-    status: status_type_enum.SUCCESS,
-    token_type: type ?? null,
-    data: token ?? null,
-    forSignData: forSignData ?? null,
-    message: message ?? null,
-  };
-};
-const customTokenError = (message?: string): CustomTokenResponseI => {
-  return {
-    status: status_type_enum.ERROR,
-    token_type: null,
-    data: null,
-    forSignData: null,
-    message: message ?? null,
-  };
+// Getters
+export const getAccessToken = (req: Request) => {
+  const headers = req.headers;
+  const authorization = headers?.authorization ?? null;
+  const accessToken = authorization?.replace("Bearer ", "") ?? null;
+  return accessToken;
 };
 
+export const getRefreshToken = (req: Request) => {
+  const cookies = req.cookies;
+  const refreshToken = cookies?.refreshToken ?? null;
+  return refreshToken;
+};
+
+export const extractTokenData = ({
+  token,
+}: extractTokenDataI): JwtPayload | null => {
+  try {
+    const decodedToken: JwtPayload | null = jwt.decode(token, {
+      complete: false,
+      json: true,
+    });
+    return decodedToken;
+  } catch (error) {
+    console.log("Error found:", {
+      file_path: "helper.js",
+      method: "validateToken",
+      message: error,
+    });
+    return customTokenError();
+  }
+};
+
+// Generates
 export const generateAccessToken = <T>(data: NonNullable<T>) => {
   try {
     const accessToken = jwt.sign(
@@ -69,19 +66,6 @@ export const generateAccessToken = <T>(data: NonNullable<T>) => {
     });
     return customTokenError();
   }
-};
-
-export const getAccessToken = (req: Request) => {
-  const headers = req.headers;
-  const authorization = headers?.authorization ?? null;
-  const accessToken = authorization?.replace("Bearer ", "") ?? null;
-  return accessToken;
-};
-
-export const getRefreshToken = (req: Request) => {
-  const cookies = req.cookies;
-  const refreshToken = cookies?.refreshToken ?? null;
-  return refreshToken;
 };
 
 export const generateRefreshToken = <T>(data: NonNullable<T>) => {
@@ -107,6 +91,7 @@ export const generateRefreshToken = <T>(data: NonNullable<T>) => {
   }
 };
 
+// Validators
 export const validateToken = ({ type, token }: validateTokenI) => {
   try {
     const verfiedToken: any = jwt.verify(
@@ -131,25 +116,7 @@ export const validateToken = ({ type, token }: validateTokenI) => {
     }
   } catch (error) {
     console.log("Error found:", {
-      file_path: "helper.js",
-      method: "validateToken",
-      message: error,
-    });
-    return customTokenError();
-  }
-};
-
-export const extractTokenData = ({
-  token,
-}: extractTokenDataI): JwtPayload | null => {
-  try {
-    const decodedToken: JwtPayload | null = jwt.decode(token, {
-      complete: false,
-      json: true,
-    });
-    return decodedToken;
-  } catch (error) {
-    console.log("Error found:", {
+      token_type: type,
       file_path: "helper.js",
       method: "validateToken",
       message: error,
@@ -224,28 +191,4 @@ export const validateTokens = ({
 
     return customTokenError();
   }
-};
-
-export const generateCookie = ({
-  res,
-  value_name,
-  value,
-  maxAge,
-}: generateCookieI) => {
-  return res.cookie(value_name, value, {
-    httpOnly: true,
-    secure: false,
-    path: "/",
-    sameSite: "lax",
-    maxAge:
-      maxAge === null
-        ? 0
-        : typeof maxAge === "string"
-        ? parseInt(maxAge)
-        : maxAge,
-  });
-};
-
-export const generateUUID = () => {
-  return uuid();
 };
