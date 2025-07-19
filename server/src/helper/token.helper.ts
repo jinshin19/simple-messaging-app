@@ -36,7 +36,7 @@ export const extractTokenData = ({
     return decodedToken;
   } catch (error) {
     console.log("Error found:", {
-      file_path: "helper.js",
+      file_path: "token.helper.ts",
       method: "validateToken",
       message: error,
     });
@@ -60,7 +60,7 @@ export const generateAccessToken = <T>(data: NonNullable<T>) => {
     });
   } catch (error) {
     console.log("Error found:", {
-      file_path: "helper.js",
+      file_path: "token.helper.ts",
       method: "generateAccessToken",
       message: error,
     });
@@ -83,7 +83,7 @@ export const generateRefreshToken = <T>(data: NonNullable<T>) => {
     });
   } catch (error) {
     console.log("Error found:", {
-      file_path: "helper.js",
+      file_path: "token.helper.ts",
       method: "generateRefreshToken",
       message: error,
     });
@@ -117,7 +117,7 @@ export const validateToken = ({ type, token }: validateTokenI) => {
   } catch (error) {
     console.log("Error found:", {
       token_type: type,
-      file_path: "helper.js",
+      file_path: "token.helper.ts",
       method: "validateToken",
       message: error,
     });

@@ -16,7 +16,7 @@ export const database = async (script: any, values: any) => {
     return result;
   } catch (error: any) {
     console.log("Error found:", {
-      file_path: "database.js",
+      file_path: "database.ts",
       message: error,
     });
     const databaseErrorResult = DATABASE.ERRORS.filter(
