@@ -42,7 +42,7 @@ router.get(
       return await signUserUp({ user: raw, req, res });
     } catch (error) {
       console.log("Error found:", {
-        file_path: "auth.routes.js",
+        file_path: "auth.routes.ts",
         method: "auth/google/callback",
         message: error,
       });

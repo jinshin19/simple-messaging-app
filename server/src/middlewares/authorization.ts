@@ -29,7 +29,7 @@ export const validateAuthorization = async (
     return next();
   } catch (error: unknown) {
     console.log("Error found:", {
-      file_path: "auth.controllers.js",
+      file_path: "auth.controllers.ts",
       method: "validateAuthorization",
       message: error,
     });
