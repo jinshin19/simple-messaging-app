@@ -33,7 +33,8 @@ body {
   align-items: center;
   height: 100vb;
 }
-.signin-wrapper button {
+.signin-wrapper button,
+.signin-wrapper a {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

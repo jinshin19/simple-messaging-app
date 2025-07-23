@@ -1,19 +1,15 @@
-"use client";
+// "use client";
 import Image from "next/image";
-import React from "react";
 import googleIcon from "../../public/google-iconv2.png";
+import Link from "next/link";
 
 const Signin = () => {
-  const signin = async () => {
-    console.log("You clicked the signin button");
-  };
-
   return (
     <div className="signin-wrapper">
-      <button type="button" onClick={signin}>
+      <Link href={"http://localhost:3001/api/auth/google"}>
         <Image src={googleIcon} width={30} height={30} alt="Google Icon" /> Sign
         in with Google
-      </button>
+      </Link>
     </div>
   );
 };

@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import {
+  extractTokenData,
   getAccessToken,
   getRefreshToken,
   validateTokens,
 } from "../helper/token.helper";
 import { JWT } from "../constants/constants";
 import { API } from "../constants/api.contants";
+import { generateCookie } from "../helper/cookie.helper";
+import { getCurrentUser } from "../helper/user.helper";
 
 export const validateAuthorization = async (req: Request, res: Response) => {
   try {
@@ -19,6 +22,17 @@ export const validateAuthorization = async (req: Request, res: Response) => {
         ok: false,
         data: null,
         message: API.UNAUTHORIZED.MESSAGE,
+      });
+    }
+
+    if (!refreshToken) {
+      const tokenData = extractTokenData({ token: accessToken! });
+      const userRefreshToken = await getCurrentUser(tokenData?.user_id);
+      generateCookie({
+        res,
+        value_name: JWT.NORMALIZE.REFRESH_TOKEN,
+        value: userRefreshToken,
+        maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
       });
     }
 
