@@ -1,20 +1,15 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Dashboard from "./dashboard/page";
+import Signin from "./signin/page";
+import Wrapper from "./wrapper";
 
-export default function Home() {
-  const [isLoggedIn, seIsLoggedIn] = useState(false);
-  const router = useRouter();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        router.replace("/dashboard");
-      } catch (error) {
-        console.log("Error found in home component", error);
-        router.replace("/login");
-      }
-    };
-    fetchData();
-  }, []);
-  return <div>Create a logic here if authenticated or not</div>;
+export default function Page() {
+  const [authenticated, setAuthenticated] = useState(false);
+  // return (
+  //   <Wrapper>
+  //     <Signin />
+  //   </Wrapper>
+  // );
+  return "hello";
 }

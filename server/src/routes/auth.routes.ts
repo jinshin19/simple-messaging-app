@@ -10,6 +10,7 @@ import {
   authenticatedGoogleUserI,
   isUserAlreadyRegisteredResultI,
 } from "../utils/types/auth.types";
+import { validateAuthorization } from "../controllers/auth.controller";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: "/login",
+    failureRedirect: "http://localhost:3000/signin",
   }),
   async (req, res) => {
     try {
@@ -54,5 +55,7 @@ router.get(
     }
   }
 );
+
+router.get("/validate", validateAuthorization);
 
 export default router;

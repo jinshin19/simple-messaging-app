@@ -88,11 +88,11 @@ export const signUserIn = async ({ user, res }: singUserIn) => {
       maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
     });
 
-    return res.status(API.SIGNIN.CODE).send({
-      ok: true,
-      data: accessToken?.data,
-      message: API.SIGNIN.MESSAGE,
-    });
+    return res
+      .status(API.SIGNIN.CODE)
+      .redirect(
+        `http://localhost:3000/dashboard?token=${accessToken?.data?.accessToken}`
+      );
   } catch (error) {
     console.log("Error found:", {
       file_path: "auth.helpers.ts",
