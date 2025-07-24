@@ -16,7 +16,8 @@ export const SCRIPTS = {
              messages.receiver_id as receiver_id,
              sender.given_name as sender_name,
              receiver.given_name as receiver_name,
-             messages.message as message
+             messages.message as message,
+             messages.createdAt as sent_time
             from messages 
             join users sender on messages.sender_id = sender.user_id
             join users receiver on messages.receiver_id = receiver.user_id 
