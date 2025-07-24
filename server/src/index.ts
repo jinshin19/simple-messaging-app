@@ -22,11 +22,14 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
-    credentials: true,
+    origin: ["http://localhost:5173", "http://localhost:3000"],
   })
 );
-
+app.post("/test", (req, res) => {
+  // analyze why socket is not working, watch youtube tutorial or ask chat gtp or look to the documenttations
+  // socket?.emit("message", "testing");
+  return res.send("Test only");
+});
 app.use("/api", authRouter);
-app.use(validateAuthorization);
+// app.use(validateAuthorization);
 app.use("/api", messagesRouter);

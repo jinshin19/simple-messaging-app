@@ -35,7 +35,8 @@ export const getMessage = async (req: Request, res: Response) => {
     const extractedTokenData = extractTokenData({
       token: accessToken as string,
     });
-    const sender_id = extractedTokenData?.user_id ?? null;
+    // const sender_id = extractedTokenData?.user_id ?? null;
+    const sender_id = "5a3d6285-2cd7-4d4f-8ad9-fd53a9ce85cf";
 
     const conversation = await database(
       SCRIPTS.MESSAGE.GET_ONE_ON_ONE_CONVERSATION,
@@ -67,7 +68,8 @@ export const createMessage = async (req: Request, res: Response) => {
     const extractedTokenData = extractTokenData({
       token: accessToken as string,
     });
-    const sender_id = extractedTokenData?.user_id ?? null;
+    // const sender_id = extractedTokenData?.user_id ?? null;
+    const sender_id = "5a3d6285-2cd7-4d4f-8ad9-fd53a9ce85cf";
     const body: createMessageI = req.body;
 
     const result = await database(SCRIPTS.MESSAGE.SEND_MESSAGE, [

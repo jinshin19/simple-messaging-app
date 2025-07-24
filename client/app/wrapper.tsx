@@ -5,8 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const path = usePathname();
+
+  console.log("path", path);
   const allowedPaths = ["/", "/dashboard", "/conversations"];
   const notAllowedPaths = ["/signin"];
+  const isAllowed = allowedPaths.some(
+    (allowed) => path === allowed || path.startsWith(`${allowed}/`)
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -15,7 +20,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
         const response = await validateAuthorization();
 
         if (response.status === 401) {
-          if (allowedPaths.includes(path)) {
+          if (isAllowed) {
             router.replace("/signin");
           }
         } else {

@@ -1,14 +1,11 @@
-import Link from "next/link";
+import { timeFormatter } from "../utils/helpers/timeFormatter";
 
-const MessageRightSide = () => {
-  const content =
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, id veritatis quaerat quidem provident adipisci labore velit eveniet nesciunt voluptas distinctio officiis alias. Itaque id inventore rerum, consequatur expedita esse.";
-
+const MessageRightSide = ({ content, time }: MessageRightSideI) => {
+  const timeFormat = timeFormatter(time);
   return (
-    <div className="message-right-side-card">
-      {/* <div className="name">bruce</div> */}
+    <div className="message-right-side-card my-1">
       <div className="message">{content}</div>
-      <div className="time"> 8:50PM</div>
+      <div className="time">{timeFormat.timeFormat}</div>
     </div>
   );
 };
