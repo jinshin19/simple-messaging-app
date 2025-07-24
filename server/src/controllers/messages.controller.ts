@@ -35,6 +35,7 @@ export const getMessage = async (req: Request, res: Response) => {
     const extractedTokenData = extractTokenData({
       token: accessToken as string,
     });
+
     const sender_id = extractedTokenData?.user_id ?? null;
 
     const conversation = await database(
@@ -67,6 +68,7 @@ export const createMessage = async (req: Request, res: Response) => {
     const extractedTokenData = extractTokenData({
       token: accessToken as string,
     });
+
     const sender_id = extractedTokenData?.user_id ?? null;
     const body: createMessageI = req.body;
 

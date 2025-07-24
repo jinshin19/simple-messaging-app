@@ -146,13 +146,11 @@ export const signUserUp = async ({ user, res }: singUserUp) => {
     // Used to development only to pass this in postman
     console.log("sign up refreshToken", refreshToken);
     // ------------------------------------------------
-    return res.status(API.SIGNUP.CODE).send({
-      ok: true,
-      data: {
-        accessToken,
-      },
-      message: API.SIGNUP.MESSAGE,
-    });
+    return res
+      .status(API.SIGNUP.CODE)
+      .redirect(
+        `http://localhost:3000/dashboard?token=${accessToken?.data?.accessToken}`
+      );
   } catch (error) {
     console.log("Error found:", {
       file_path: "auth.helpers.ts",
