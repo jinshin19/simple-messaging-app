@@ -1,12 +1,10 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { validateAuthorization } from "./utils/apis/validateApi";
 import { usePathname, useRouter } from "next/navigation";
 
 const Wrapper = ({ children }: { children: ReactNode }) => {
   const path = usePathname();
-
-  console.log("path", path);
   const allowedPaths = ["/", "/dashboard", "/conversations"];
   const notAllowedPaths = ["/signin"];
   const isAllowed = allowedPaths.some(
