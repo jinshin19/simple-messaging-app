@@ -12,6 +12,7 @@ import {
 import { tokenChecker } from "../utils/helpers/tokenChecker";
 import { extractedTokenData } from "../utils/helpers/token.helper";
 import { ConversationsI } from "../utils/types/conversations/conversations";
+import { ChevronLeft, SendHorizontal } from "lucide-react";
 
 const MessageComponent = () => {
   const params = useParams();
@@ -97,14 +98,27 @@ const MessageComponent = () => {
 
   return (
     <div className="message-wrapper">
-      <div className="receiver-detail">
+      <div className="header-wrapper">
         <div className="back-button-container">
-          <Link href="/dashboard">Back</Link>
+          <Link href="/dashboard">
+            <ChevronLeft size={25} />
+            BACK
+          </Link>
         </div>
-        <div className="name">{receiverInfo[0]?.receiver_name}</div>
-        <div className="status"></div>
+        <div className="user-info">
+          <div className="name">{receiverInfo[0]?.receiver_name}</div>
+          <div className="status-container">
+            <p>Online</p>
+            <div className="status bg-green-500"></div>
+          </div>
+        </div>
       </div>
       <div className="content">
+        {conversations?.length <= 0 && (
+          <div className="no-conversation">
+            You haven’t messaged Bruce yet. Say hi to start the conversation!
+          </div>
+        )}
         {conversations?.length > 0 &&
           conversations.map((m: ConversationsI) => {
             return m?.sender_id == sender_id ? (
@@ -134,7 +148,8 @@ const MessageComponent = () => {
         </div>
         <div className="send">
           <button type="button" onClick={sendMessage}>
-            Send
+            <SendHorizontal size={23} />
+            SEND
           </button>
         </div>
       </div>

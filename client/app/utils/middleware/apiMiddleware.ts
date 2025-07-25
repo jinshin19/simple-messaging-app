@@ -28,6 +28,13 @@ export const apiMiddleware = async ({
       },
       credentials: "include",
     });
+
+    const isSignInPage = window.location.href;
+
+    if (response.status === 401 && !isSignInPage.includes("/signin")) {
+      window.location.href = "/signin";
+    }
+
     return response;
   } catch (error: unknown) {
     if (error instanceof Error) {
