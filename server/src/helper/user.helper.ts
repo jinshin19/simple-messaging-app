@@ -1,6 +1,6 @@
 import { database } from "../database/database";
 
-export const getCurrentUser = async (user_id: string) => {
+export const getCurrentUserRefreshToken = async (user_id: string) => {
   if (!user_id) {
     return null;
   }

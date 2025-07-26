@@ -45,7 +45,7 @@ const Dashboard = () => {
       </div>
       <hr />
       <div className="users-wrapper">
-        {users.length > 0 &&
+        {users?.length > 0 &&
           users.map((user) => <UsersCard key={user.user_id} {...user} />)}
       </div>
     </div>

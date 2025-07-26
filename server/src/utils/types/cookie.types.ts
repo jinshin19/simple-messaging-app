@@ -1,6 +1,7 @@
+import { Response } from "express";
+
 export interface generateCookieI {
-  res: any;
+  res: Response;
   value_name: string;
   value: string;
-  maxAge: string | number | null;
 }
