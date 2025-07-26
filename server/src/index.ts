@@ -8,6 +8,7 @@ config();
 import "./auth/google.auth";
 
 import authRouter from "./routes/auth.routes";
+import usersRouter from "./routes/user.routes";
 import messagesRouter from "./routes/messages.routes";
 import { validateAuthorization } from "./middlewares/authorization";
 import { useSocket } from "./socket/useSocket";
@@ -29,4 +30,5 @@ app.use(
 
 app.use("/api", authRouter);
 app.use(validateAuthorization);
+app.use("/api", usersRouter);
 app.use("/api", messagesRouter);
