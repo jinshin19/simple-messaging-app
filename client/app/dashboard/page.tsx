@@ -1,20 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { tokenChecker } from "../utils/helpers/tokenChecker";
 import { GenericResponse } from "../utils/types/commons/genericResponse";
 import UsersCard from "../components/users-card";
 import { getUsers } from "../utils/apis/usersApi";
 import { userI } from "../utils/types/users/userTypes";
+import { logoutUser } from "../utils/apis/authApi";
 
 const Dashboard = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get("token") ?? null;
 
   const [users, setUsers] = useState<userI[]>([]);
   const name = "Joshua Philip Unilongo";
   const logout = async () => {
-    console.log("You clicked the logout buttton");
+    try {
+      const response = await logoutUser();
+      if (response.status === 200) {
+        localStorage.removeItem("accessToken");
+        router.replace("/signin");
+      }
+    } catch (error: any) {
+      throw new Error(error);
+    }
   };
 
   useEffect(() => {
