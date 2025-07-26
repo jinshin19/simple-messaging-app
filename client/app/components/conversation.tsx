@@ -14,7 +14,7 @@ import { extractedTokenData } from "../utils/helpers/token.helper";
 import { ConversationsI } from "../utils/types/conversations/conversations";
 import { ChevronLeft, SendHorizontal } from "lucide-react";
 
-const MessageComponent = () => {
+const ConversationComponent = () => {
   const params = useParams();
   const messageRef = useRef<HTMLDivElement | null>(null);
   const [conversations, setConversations] = useState<ConversationsI[]>([]);
@@ -157,4 +157,4 @@ const MessageComponent = () => {
   );
 };
 
-export default MessageComponent;
+export default ConversationComponent;

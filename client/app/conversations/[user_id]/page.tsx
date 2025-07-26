@@ -1,4 +1,4 @@
-import Message from "@/app/components/message";
+import Message from "@/app/components/conversation";
 
 const MessagePage = () => {
   return (
