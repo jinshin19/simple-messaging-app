@@ -1,5 +1,3 @@
-import { RequestInit } from "next/dist/server/web/spec-extension/request";
-
 export const apiMiddleware = async ({
   url,
   options,

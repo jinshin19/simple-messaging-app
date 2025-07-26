@@ -85,7 +85,6 @@ export const signUserIn = async ({ user, res }: singUserIn) => {
       res,
       value_name: JWT.NORMALIZE.REFRESH_TOKEN,
       value: refreshToken,
-      maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
     });
 
     return res
@@ -140,7 +139,6 @@ export const signUserUp = async ({ user, res }: singUserUp) => {
       res,
       value_name: JWT.NORMALIZE.REFRESH_TOKEN,
       value: refreshToken,
-      maxAge: process.env.SIMPLE_MESSAGING_APP_COOKIE_EXPIRY ?? null,
     });
 
     // Used to development only to pass this in postman
