@@ -7,7 +7,7 @@ import {
 } from "../helper/token.helper";
 import { JWT } from "../constants/constants";
 import { API } from "../constants/api.contants";
-import { generateCookie } from "../helper/cookie.helper";
+import { clearCookie, generateCookie } from "../helper/cookie.helper";
 import { getCurrentUserRefreshToken } from "../helper/user.helper";
 
 export const validateAuthorization = async (req: Request, res: Response) => {
@@ -46,6 +46,31 @@ export const validateAuthorization = async (req: Request, res: Response) => {
     console.log("Error found:", {
       file_path: "auth.controllers.ts",
       method: "validateAuthorization",
+      message: error,
+    });
+    if (error instanceof Error) {
+      throw new Error(error.stack);
+    } else {
+      throw new Error(error as any);
+    }
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    clearCookie({
+      res,
+      value_name: JWT.NORMALIZE.REFRESH_TOKEN,
+    });
+    return res.status(API.OK.CODE).send({
+      ok: true,
+      data: null,
+      message: API.OK.MESSAGE,
+    });
+  } catch (error) {
+    console.log("Error found:", {
+      file_path: "auth.controllers.ts",
+      method: "logout",
       message: error,
     });
     if (error instanceof Error) {

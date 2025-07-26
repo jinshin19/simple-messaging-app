@@ -59,4 +59,8 @@ export const API = {
     CODE: 400,
     MESSAGE: "Something went wrong",
   },
+  OK: {
+    CODE: 200,
+    MESSAGE: "OK",
+  },
 };
