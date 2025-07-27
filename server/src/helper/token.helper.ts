@@ -103,7 +103,7 @@ export const validateToken = ({ type, token }: validateTokenI) => {
         type: token_type_enum.ACCESS_TOKEN,
         data: token,
         message: null,
-        forSignData: verfiedToken?.user_id,
+        forSignData: verfiedToken,
       });
     }
     if (type === JWT.TYPE.REFRESH_TOKEN) {
@@ -111,7 +111,7 @@ export const validateToken = ({ type, token }: validateTokenI) => {
         type: token_type_enum.REFRESH_TOKEN,
         data: token,
         message: null,
-        forSignData: verfiedToken?.user_id,
+        forSignData: verfiedToken,
       });
     }
   } catch (error) {
@@ -152,7 +152,7 @@ export const validateTokens = ({
         return verifyRefreshToken;
       } else {
         const generatedAccessToken = generateAccessToken({
-          user_id: verifyRefreshToken?.forSignData,
+          data: verifyRefreshToken?.forSignData,
         });
         return customTokenSuccess({
           type: token_type_enum.REFRESH_TOKEN,
@@ -179,7 +179,7 @@ export const validateTokens = ({
     });
 
     const generatedAccessToken = generateAccessToken({
-      user_id: verifyRefreshToken?.forSignData,
+      data: verifyRefreshToken?.forSignData,
     });
 
     if (verifyRefreshToken?.status === JWT.STATUS.SUCCESS) {

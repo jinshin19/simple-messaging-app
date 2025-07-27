@@ -26,12 +26,12 @@ export interface isUserAlreadyRegisteredResultI {
   data: userAlreadyRegisteredDataI | null;
 }
 
-export interface singUserIn {
+export interface signUserInI {
   user: userAlreadyRegisteredDataI;
   res: Response;
 }
 
-export interface singUserUp {
+export interface signUserUpI {
   user: authenticatedGoogleUserI;
   req: Request;
   res: Response;
