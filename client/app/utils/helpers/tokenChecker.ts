@@ -2,7 +2,7 @@ export const tokenChecker = ({
   queryToken,
 }: tokenCheckerParameterI): objectReturnI => {
   const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
-  const tokenInLocalStorage = localStorage.getItem("accessToken");
+  const tokenInLocalStorage = localStorage.getItem("SMA-accessToken");
   const token = tokenInLocalStorage === "null" ? null : tokenInLocalStorage;
 
   const isTokenValid = (tokenParam: string) => jwtRegex.test(tokenParam);
@@ -22,7 +22,7 @@ export const tokenChecker = ({
     }
 
     if (queryToken !== null && !token) {
-      localStorage.setItem("accessToken", queryToken);
+      localStorage.setItem("SMA-accessToken", queryToken);
       const isValid = isTokenValid(queryToken);
       return {
         hasToken: isValid,
@@ -31,7 +31,7 @@ export const tokenChecker = ({
     }
 
     if (queryToken !== null) {
-      localStorage.setItem("accessToken", queryToken);
+      localStorage.setItem("SMA-accessToken", queryToken);
       const isValid = isTokenValid(queryToken);
       return {
         hasToken: isValid,

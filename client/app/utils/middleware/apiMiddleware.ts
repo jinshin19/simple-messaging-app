@@ -7,7 +7,7 @@ export const apiMiddleware = async ({
 }) => {
   try {
     const baseURl = "http://localhost:3001/api";
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("SMA-accessToken");
 
     options = {
       ...options,

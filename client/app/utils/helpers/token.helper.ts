@@ -1,15 +1,12 @@
 import { jwtDecode } from "jwt-decode";
+import { extractedTokenDataI } from "../types/commons/extractedTokenData";
 
-interface jwtPayload {
-  user_id: string | null;
-  exp: number;
-  iat: number;
-}
-
-export const extractedTokenData = (token: string | null): string | null => {
+export const extractedTokenData = (
+  token: string | null
+): extractedTokenDataI | null => {
   if (!token) {
     return null;
   }
-  const decoded: jwtPayload = jwtDecode(token);
-  return decoded.user_id;
+  const decoded: extractedTokenDataI = jwtDecode(token);
+  return decoded;
 };

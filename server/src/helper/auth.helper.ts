@@ -7,8 +7,8 @@ import {
 } from "./token.helper";
 import {
   isUserAlreadyRegisteredResultI,
-  singUserIn,
-  singUserUp,
+  signUserInI,
+  signUserUpI,
   userAlreadyRegisteredDataI,
 } from "../utils/types/auth.types";
 import { generateCookie } from "./cookie.helper";
@@ -52,7 +52,7 @@ export const isUserAlreadyRegistered = async (
   };
 };
 
-export const signUserIn = async ({ user, res }: singUserIn) => {
+export const signUserIn = async ({ user, res }: signUserInI) => {
   try {
     const validatedToken = validateToken({
       type: "refresh_token",
@@ -61,12 +61,18 @@ export const signUserIn = async ({ user, res }: singUserIn) => {
 
     const accessToken = generateAccessToken({
       user_id: user.user_id,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      picture: user.picture,
     });
 
     const refreshToken =
       validatedToken?.status === JWT.STATUS.ERROR
         ? generateRefreshToken({
             user_id: user.user_id,
+            given_name: user.given_name,
+            family_name: user.family_name,
+            picture: user.picture,
           }).data?.refreshToken
         : user.refresh_token;
 
@@ -105,14 +111,20 @@ export const signUserIn = async ({ user, res }: singUserIn) => {
   }
 };
 
-export const signUserUp = async ({ user, res }: singUserUp) => {
+export const signUserUp = async ({ user, res }: signUserUpI) => {
   try {
     const user_id = generateUUID();
     const refreshTokenResult = generateRefreshToken({
       user_id,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      picture: user.picture,
     });
     const accessTokenResult = generateAccessToken({
       user_id,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      picture: user.picture,
     });
     const accessToken = accessTokenResult.data?.accessToken ?? null;
     const refreshToken = refreshTokenResult.data?.refreshToken ?? null;

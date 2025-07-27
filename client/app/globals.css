@@ -49,6 +49,11 @@ body {
   transform: scale(0.95);
 }
 
+.seperator {
+  background: rgb(109, 109, 109);
+  height: 1px;
+}
+
 /* Dashboard */
 .dashboard {
   display: flex;
@@ -62,6 +67,10 @@ body {
   justify-content: center;
   position: relative;
 }
+.dashboard .dashboard-header .users-title {
+  padding: 1em 0;
+  text-align: center;
+}
 .dashboard .users-wrapper {
   width: 100%;
   padding: 1em;
@@ -72,23 +81,21 @@ body {
   flex-wrap: wrap;
   gap: 20px;
 }
-.dashboard .dashboard-header .users-title {
-  padding: 1em 0;
-  text-align: center;
-  font-size: 1.5em;
-}
 .dashboard .users-wrapper .users-card {
   display: block;
-  width: 250px;
-  border: 1px solid white;
-  height: 300px;
+  width: 220px;
+  border: 1px solid rgb(109, 109, 109);
+  height: 260px;
   border-radius: 10px;
   padding: 1em;
 }
+.dashboard .users-wrapper .users-card:hover {
+  transition: 0.1s;
+  transform: translateY(-5px);
+}
 .dashboard .users-wrapper .users-card .photos {
-  width: 80%;
-  border: 1px solid rgb(158, 158, 158);
-  height: 65%;
+  width: 70%;
+  height: 58%;
   border-radius: 50em;
   margin: auto;
   overflow: hidden;
@@ -99,7 +106,7 @@ body {
 }
 .dashboard .users-wrapper .users-card span {
   display: block;
-  background: white;
+  background: rgb(109, 109, 109);
   height: 1px;
   width: 100%;
   margin: 1em 0;

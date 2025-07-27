@@ -9,8 +9,6 @@ import {
   createConversation,
   getConversation,
 } from "../utils/apis/conversationsApi";
-import { tokenChecker } from "../utils/helpers/tokenChecker";
-import { extractedTokenData } from "../utils/helpers/token.helper";
 import { ConversationsI } from "../utils/types/conversations/conversations";
 import { ChevronLeft, SendHorizontal } from "lucide-react";
 
@@ -78,11 +76,8 @@ const ConversationComponent = () => {
       socket.on("new_message", handleMessage);
       socket.on("message_received", handleMessage);
 
-      const tokenCheckerResult = tokenChecker({ queryToken: null });
-      const extractedTokenDataResult = extractedTokenData(
-        tokenCheckerResult.token
-      );
-      setSenderId(extractedTokenDataResult);
+      const sender_id = localStorage.getItem("SMA-user_id");
+      setSenderId(sender_id);
     }
 
     return () => {
