@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { database } from "../database/database";
 import { extractTokenData, getAccessToken } from "../helper/token.helper";
 import { API } from "../constants/api.contants";
-import { SCRIPTS } from "../scripts/users.script";
+import { MESSAGES_SCRIPT } from "../scripts/message.script";
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
-    const result = await database(SCRIPTS.MESSAGE.GET_ALL_MESSAGES, "");
+    const result = await database(MESSAGES_SCRIPT.MESSAGE.GET_ALL_MESSAGES, "");
     return res.status(API.GET.SUCCESS.CODE).send({
       ok: true,
       data: result,
@@ -39,7 +39,7 @@ export const getMessage = async (req: Request, res: Response) => {
     const sender_id = extractedTokenData?.user_id ?? null;
 
     const conversation = await database(
-      SCRIPTS.MESSAGE.GET_ONE_ON_ONE_CONVERSATION,
+      MESSAGES_SCRIPT.MESSAGE.GET_ONE_ON_ONE_CONVERSATION,
       [sender_id, receiver_id, receiver_id, sender_id]
     );
 
@@ -72,7 +72,7 @@ export const createMessage = async (req: Request, res: Response) => {
     const sender_id = extractedTokenData?.user_id ?? null;
     const body: createMessageI = req.body;
 
-    const result = await database(SCRIPTS.MESSAGE.SEND_MESSAGE, [
+    const result = await database(MESSAGES_SCRIPT.MESSAGE.SEND_MESSAGE, [
       sender_id,
       body?.receiver_id,
       body?.message,
