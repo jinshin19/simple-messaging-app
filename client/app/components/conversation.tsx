@@ -11,15 +11,16 @@ import {
 } from "../utils/apis/conversationsApi";
 import { ConversationsI } from "../utils/types/conversations/conversations";
 import { ChevronLeft, SendHorizontal } from "lucide-react";
+import { getUser } from "../utils/apis/usersApi";
 
 const ConversationComponent = () => {
   const params = useParams();
   const messageRef = useRef<HTMLDivElement | null>(null);
+  const [user, setUser] = useState<any>();
   const [conversations, setConversations] = useState<ConversationsI[]>([]);
   const [values, setvalues] = useState("");
   const [sender_id, setSenderId] = useState<string | null>(null);
   const user_id = params?.user_id ?? null;
-  const receiverInfo = conversations?.filter((c) => c.receiver_id === user_id);
 
   const sendMessage = async () => {
     try {
@@ -45,13 +46,26 @@ const ConversationComponent = () => {
   };
 
   useEffect(() => {
+    if (!user_id) return;
     const fetchData = async () => {
       try {
-        const response = await getConversation(user_id as string);
-        const data = await response.json();
-        if (data?.ok) {
+        const [receiverInfoResponse, conversationsResponse] = await Promise.all(
+          [getUser(user_id as string), getConversation(user_id as string)]
+        );
+
+        const receiverResponseResult = await receiverInfoResponse.json();
+
+        if (receiverResponseResult.ok && receiverResponseResult.data !== null) {
+          setUser(receiverResponseResult.data);
+        }
+
+        const conversationResponseResult = await conversationsResponse.json();
+        if (
+          conversationResponseResult?.ok &&
+          conversationResponseResult.data?.length > 0
+        ) {
           socket.emit("register", user_id);
-          setConversations(data?.data);
+          setConversations(conversationResponseResult.data);
         }
       } catch (error) {
         console.log("Error Found:", {
@@ -63,29 +77,27 @@ const ConversationComponent = () => {
       }
     };
 
-    if (user_id) {
-      fetchData();
+    fetchData();
 
-      const handleMessage = (data: boolean) => {
-        if (data === true) {
-          fetchData();
-        }
-      };
+    const handleMessage = (data: boolean) => {
+      if (data === true) {
+        fetchData();
+      }
+    };
 
-      socket.on("refresh", handleMessage);
-      socket.on("new_message", handleMessage);
-      socket.on("message_received", handleMessage);
+    socket.on("refresh", handleMessage);
+    socket.on("new_message", handleMessage);
+    socket.on("message_received", handleMessage);
 
-      const sender_id = localStorage.getItem("SMA-user_id");
-      setSenderId(sender_id);
-    }
+    const sender_id = localStorage.getItem("SMA-user_id");
+    setSenderId(sender_id);
 
     return () => {
+      socket.off("refresh");
       socket.off("new_message");
       socket.off("message_received");
-      socket.off("refresh");
     };
-  }, []);
+  }, [user_id]);
 
   useEffect(() => {
     messageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -101,7 +113,8 @@ const ConversationComponent = () => {
           </Link>
         </div>
         <div className="user-info">
-          <div className="name">{receiverInfo[0]?.receiver_name}</div>
+          <div className="name">{user?.given_name}</div>
+          <div className="name">{""}</div>
           <div className="status-container">
             <p>Online</p>
             <div className="status bg-green-500"></div>

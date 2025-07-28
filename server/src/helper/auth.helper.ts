@@ -15,7 +15,7 @@ import { generateCookie } from "./cookie.helper";
 import { JWT } from "../constants/constants";
 import { API } from "../constants/api.contants";
 import { generateUUID } from "../utils/common.utils";
-import { SCRIPTS } from "../scripts/users.script";
+import { USERS_SCRIPT } from "../scripts/users.script";
 
 export const isUserAlreadyRegistered = async (
   req: Request
@@ -25,7 +25,7 @@ export const isUserAlreadyRegistered = async (
     const raw = JSON.parse(user?._raw);
 
     const isAlreadyRegistered: userAlreadyRegisteredDataI[] = await database(
-      SCRIPTS.USER.GET_USER_BY_EMAIL_AND_VERIFIED,
+      USERS_SCRIPT.USER.GET_USER_BY_EMAIL_AND_VERIFIED,
       [raw?.email, raw?.email_verified]
     );
 
@@ -77,7 +77,7 @@ export const signUserIn = async ({ user, res }: signUserInI) => {
         : user.refresh_token;
 
     if (validatedToken?.status === JWT.STATUS.ERROR) {
-      await database(SCRIPTS.USER.UPDATE_USER_REFRESH_TOKEN, [
+      await database(USERS_SCRIPT.USER.UPDATE_USER_REFRESH_TOKEN, [
         refreshToken,
         user.user_id,
       ]);
@@ -129,7 +129,7 @@ export const signUserUp = async ({ user, res }: signUserUpI) => {
     const accessToken = accessTokenResult.data?.accessToken ?? null;
     const refreshToken = refreshTokenResult.data?.refreshToken ?? null;
 
-    const result = await database(SCRIPTS.USER.SIGN_UP_USER, [
+    const result = await database(USERS_SCRIPT.USER.SIGN_UP_USER, [
       user_id,
       user.given_name,
       user.family_name,

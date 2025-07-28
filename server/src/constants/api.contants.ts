@@ -63,4 +63,8 @@ export const API = {
     CODE: 200,
     MESSAGE: "OK",
   },
+  NOT_FOUND: {
+    CODE: 404,
+    MESSAGE: "Not found",
+  },
 };
