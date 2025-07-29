@@ -14,8 +14,12 @@ config();
 // Getters
 export const getAccessToken = (req: Request) => {
   const headers = req.headers;
-  const authorization = headers?.authorization ?? null;
-  const accessToken = authorization?.replace("Bearer ", "") ?? null;
+  const authorization = headers.authorization;
+  const isNull =
+    typeof authorization === "string" && authorization === "null"
+      ? true
+      : false;
+  const accessToken = !isNull ? authorization?.replace("Bearer ", "") : null;
   return accessToken;
 };
 

@@ -8,5 +8,5 @@ export const getCurrentUserRefreshToken = async (user_id: string) => {
     "select users.refresh_token from users where user_id = ?",
     user_id
   );
-  return user[0] ?? null;
+  return user[0]?.refresh_token ?? null;
 };
