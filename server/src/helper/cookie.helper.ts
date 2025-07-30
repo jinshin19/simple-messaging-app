@@ -2,9 +2,14 @@ import { config } from "dotenv";
 import { clearCookieI, generateCookieI } from "../utils/types/cookie.types";
 config();
 
-export const generateCookie = ({ res, value_name, value }: generateCookieI) => {
+export const generateCookie = ({
+  res,
+  value_name,
+  value,
+  httpOnly = false,
+}: generateCookieI) => {
   res.cookie(value_name, value, {
-    httpOnly: true,
+    httpOnly,
     secure: false,
     path: "/",
     sameSite: "lax",

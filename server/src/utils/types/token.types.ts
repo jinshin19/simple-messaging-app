@@ -12,7 +12,7 @@ export enum status_type_enum {
 
 export interface CustomTokenSuccessParameterI<T> {
   type: token_typeT;
-  data?: T;
+  data?: T | any;
   forSignData?: T;
   message?: string | null;
 }
