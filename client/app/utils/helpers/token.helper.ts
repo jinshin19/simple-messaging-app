@@ -8,5 +8,6 @@ export const extractedTokenData = (
     return null;
   }
   const decoded: extractedTokenDataI = jwtDecode(token);
+  console.log("dcored", decoded);
   return decoded;
 };

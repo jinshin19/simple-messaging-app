@@ -86,18 +86,20 @@ export const signUserIn = async ({ user, res }: signUserInI) => {
     // Used to development only to pass this in postman
     console.log("sign in refreshToken", refreshToken);
     // ------------------------------------------------
+    generateCookie({
+      res,
+      value_name: `SMA-${JWT.NORMALIZE.ACCESS_TOKEN}`,
+      value: accessToken?.data?.accessToken,
+    });
 
     generateCookie({
       res,
       value_name: JWT.NORMALIZE.REFRESH_TOKEN,
       value: refreshToken,
+      httpOnly: true,
     });
 
-    return res
-      .status(API.SIGNIN.CODE)
-      .redirect(
-        `http://localhost:3000/dashboard?token=${accessToken?.data?.accessToken}`
-      );
+    return res.status(API.SIGNIN.CODE).redirect(`http://localhost:3000/`);
   } catch (error) {
     console.log("Error found:", {
       file_path: "auth.helpers.ts",
@@ -149,18 +151,21 @@ export const signUserUp = async ({ user, res }: signUserUpI) => {
 
     generateCookie({
       res,
+      value_name: `SMA-${JWT.NORMALIZE.ACCESS_TOKEN}`,
+      value: accessToken,
+    });
+
+    generateCookie({
+      res,
       value_name: JWT.NORMALIZE.REFRESH_TOKEN,
       value: refreshToken,
+      httpOnly: true,
     });
 
     // Used to development only to pass this in postman
     console.log("sign up refreshToken", refreshToken);
     // ------------------------------------------------
-    return res
-      .status(API.SIGNUP.CODE)
-      .redirect(
-        `http://localhost:3000/dashboard?token=${accessToken?.data?.accessToken}`
-      );
+    return res.status(API.SIGNUP.CODE).redirect(`http://localhost:3000/`);
   } catch (error) {
     console.log("Error found:", {
       file_path: "auth.helpers.ts",

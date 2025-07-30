@@ -12,15 +12,24 @@ import { customTokenError, customTokenSuccess } from "../utils/token.util";
 config();
 
 // Getters
-export const getAccessToken = (req: Request) => {
+export const getAccessToken = (req: Request): string | null => {
   const headers = req.headers;
   const authorization = headers.authorization;
-  const isNull =
-    typeof authorization === "string" && authorization === "null"
-      ? true
-      : false;
-  const accessToken = !isNull ? authorization?.replace("Bearer ", "") : null;
-  return accessToken;
+  let value: string | null;
+  if (
+    !authorization ||
+    !authorization.startsWith("Bearer") ||
+    authorization === "null" ||
+    authorization === "undefined"
+  ) {
+    value = null;
+  }
+  value = authorization?.replace("Bearer ", "") as string;
+  if (typeof value === "string" && value === "null") {
+    return null;
+  }
+  // return value;
+  return null;
 };
 
 export const getRefreshToken = (req: Request) => {
@@ -102,6 +111,8 @@ export const validateToken = ({ type, token }: validateTokenI) => {
       token,
       process.env.SIMPLE_MESSAGING_APP_JWT_SECRET!
     );
+    delete verfiedToken.exp;
+    delete verfiedToken.iat;
     if (type === JWT.TYPE.ACCESS_TOKEN) {
       return customTokenSuccess({
         type: token_type_enum.ACCESS_TOKEN,
@@ -155,9 +166,9 @@ export const validateTokens = ({
       if (verifyRefreshToken?.status === JWT.STATUS.ERROR) {
         return verifyRefreshToken;
       } else {
-        const generatedAccessToken = generateAccessToken({
-          data: verifyRefreshToken?.forSignData,
-        });
+        const generatedAccessToken = generateAccessToken(
+          verifyRefreshToken?.forSignData
+        );
         return customTokenSuccess({
           type: token_type_enum.REFRESH_TOKEN,
           data: generatedAccessToken.data,
@@ -182,9 +193,9 @@ export const validateTokens = ({
       token: refreshToken!,
     });
 
-    const generatedAccessToken = generateAccessToken({
-      data: verifyRefreshToken?.forSignData,
-    });
+    const generatedAccessToken = generateAccessToken(
+      verifyRefreshToken?.forSignData
+    );
 
     if (verifyRefreshToken?.status === JWT.STATUS.SUCCESS) {
       return customTokenSuccess({

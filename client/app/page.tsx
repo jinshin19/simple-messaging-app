@@ -1,15 +1,69 @@
 "use client";
-import { useState } from "react";
-import Dashboard from "./dashboard/page";
-import Signin from "./signin/page";
-import Wrapper from "./wrapper";
+import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { GenericResponse } from "./utils/types/commons/genericResponse";
+import UsersCard from "./components/users-card";
+import { getUsers } from "./utils/apis/usersApi";
+import { userI } from "./utils/types/users/userTypes";
+import { logoutUser } from "./utils/apis/authApi";
+import { AuthProviderContext } from "./AuthProvider";
 
 export default function Page() {
-  const [authenticated, setAuthenticated] = useState(false);
-  // return (
-  //   <Wrapper>
-  //     <Signin />
-  //   </Wrapper>
-  // );
-  return "hello";
+  const router = useRouter();
+
+  const [users, setUsers] = useState<userI[]>([]);
+  const { userData } = useContext(AuthProviderContext);
+
+  const logout = async () => {
+    try {
+      const response = await logoutUser();
+      if (response.status === 200) {
+        localStorage.removeItem("SMA-accessToken");
+        router.replace("/signin");
+      }
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getUsers();
+        const data: GenericResponse<any> = await response.json();
+
+        if (data.ok) {
+          setUsers(data.data);
+        }
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <div className="users-title">
+          Welcome! <p>{`${userData.given_name} ${userData.family_name}`}</p>
+        </div>
+        <div className="logout-wrapper">
+          <button type="button" onClick={logout} className="logout">
+            Logout
+          </button>
+        </div>
+      </div>
+      <span className="seperator"></span>
+      <div className="users-wrapper">
+        {users?.length > 0 &&
+          users.map(
+            (user) =>
+              user.user_id !== userData.user_id && (
+                <UsersCard key={user.user_id} {...user} />
+              )
+          )}
+      </div>
+    </div>
+  );
 }

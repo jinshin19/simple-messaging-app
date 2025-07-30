@@ -1,3 +1,5 @@
+import { getCookie } from "../helpers/cookie.helper";
+
 export const apiMiddleware = async ({
   url,
   options,
@@ -7,7 +9,7 @@ export const apiMiddleware = async ({
 }) => {
   try {
     const baseURl = "http://localhost:3001/api";
-    const accessToken = localStorage.getItem("SMA-accessToken");
+    const accessToken = getCookie("SMA-accessToken");
 
     options = {
       ...options,

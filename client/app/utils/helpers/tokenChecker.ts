@@ -1,11 +1,48 @@
+import { getCookie } from "./cookie.helper";
+import { extractedTokenData } from "./token.helper";
+
 export const tokenChecker = ({
-  queryToken,
+  queryToken = null,
 }: tokenCheckerParameterI): objectReturnI => {
   const jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+  const tokenInCookieStorage = getCookie("SMA-accessToken");
+  if (
+    !tokenInCookieStorage ||
+    tokenInCookieStorage?.length > 0 ||
+    tokenInCookieStorage !== "null"
+  ) {
+    localStorage.setItem("SMA-accessToken", tokenInCookieStorage!);
+  }
   const tokenInLocalStorage = localStorage.getItem("SMA-accessToken");
-  const token = tokenInLocalStorage === "null" ? null : tokenInLocalStorage;
+  const token =
+    tokenInLocalStorage === "null"
+      ? null
+      : tokenInLocalStorage || tokenInCookieStorage;
 
   const isTokenValid = (tokenParam: string) => jwtRegex.test(tokenParam);
+
+  console.log("TOKENECHECKER", token);
+
+  const setDataInLocalStorage = (token: string) => {
+    const extractedTokenDataResult = extractedTokenData(token);
+
+    localStorage.setItem(
+      "SMA-user_id",
+      extractedTokenDataResult?.user_id as string
+    );
+    localStorage.setItem(
+      "SMA-given_name",
+      extractedTokenDataResult?.given_name as string
+    );
+    localStorage.setItem(
+      "SMA-family_name",
+      extractedTokenDataResult?.family_name as string
+    );
+    localStorage.setItem(
+      "SMA-picture",
+      extractedTokenDataResult?.picture as string
+    );
+  };
 
   if (!queryToken && !token) {
     return {
@@ -13,6 +50,10 @@ export const tokenChecker = ({
       token: null,
     };
   } else {
+    const isValid = isTokenValid(token!);
+    if (isValid) {
+      setDataInLocalStorage(token!);
+    }
     if (!queryToken && token !== null) {
       const isValid = isTokenValid(token);
       return {
@@ -54,7 +95,7 @@ export const tokenChecker = ({
 };
 
 interface tokenCheckerParameterI {
-  queryToken: string | null;
+  queryToken?: string | null;
 }
 interface objectReturnI {
   hasToken: boolean;
