@@ -3,7 +3,7 @@ import Link from "next/link";
 import MessageLeftSide from "./message-left-side";
 import MessageRightSide from "./message-right-side";
 import { socket } from "../socket/socket";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   createConversation,
@@ -12,25 +12,27 @@ import {
 import { ConversationsI } from "../utils/types/conversations/conversations";
 import { ChevronLeft, SendHorizontal } from "lucide-react";
 import { getUser } from "../utils/apis/usersApi";
+import { AuthProviderContext } from "../AuthProvider";
 
 const ConversationComponent = () => {
+  const { userData } = useContext(AuthProviderContext);
   const params = useParams();
   const messageRef = useRef<HTMLDivElement | null>(null);
   const [user, setUser] = useState<any>();
   const [conversations, setConversations] = useState<ConversationsI[]>([]);
   const [values, setvalues] = useState("");
-  const [sender_id, setSenderId] = useState<string | null>(null);
-  const user_id = params?.user_id ?? null;
+  const receiver_id = params?.user_id ?? null;
 
   const sendMessage = async () => {
     try {
-      const response = await createConversation(user_id as string, values);
+      const response = await createConversation(receiver_id as string, values);
       const data = await response.json();
+      console.log("Data", userData);
       if (data?.ok) {
         setvalues("");
         const sender_info = {
-          sender_id,
-          receiver_id: user_id,
+          sender_id: userData?.user_id,
+          receiver_id: receiver_id,
           message: values,
         };
         socket.emit("message_sent", sender_info);
@@ -46,11 +48,14 @@ const ConversationComponent = () => {
   };
 
   useEffect(() => {
-    if (!user_id) return;
+    if (!receiver_id) return;
     const fetchData = async () => {
       try {
         const [receiverInfoResponse, conversationsResponse] = await Promise.all(
-          [getUser(user_id as string), getConversation(user_id as string)]
+          [
+            getUser(receiver_id as string),
+            getConversation(receiver_id as string),
+          ]
         );
 
         const receiverResponseResult = await receiverInfoResponse.json();
@@ -64,7 +69,6 @@ const ConversationComponent = () => {
           conversationResponseResult?.ok &&
           conversationResponseResult.data?.length > 0
         ) {
-          socket.emit("register", user_id);
           setConversations(conversationResponseResult.data);
         }
       } catch (error) {
@@ -89,15 +93,12 @@ const ConversationComponent = () => {
     socket.on("new_message", handleMessage);
     socket.on("message_received", handleMessage);
 
-    const sender_id = localStorage.getItem("SMA-user_id");
-    setSenderId(sender_id);
-
     return () => {
       socket.off("refresh");
-      socket.off("new_message");
       socket.off("message_received");
+      socket.off("new_message");
     };
-  }, [user_id]);
+  }, [receiver_id]);
 
   useEffect(() => {
     messageRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -107,16 +108,18 @@ const ConversationComponent = () => {
     <div className="message-wrapper">
       <div className="header-wrapper">
         <div className="back-button-container">
-          <Link href="/dashboard">
+          <Link href="/">
             <ChevronLeft size={25} />
             BACK
           </Link>
         </div>
         <div className="user-info">
-          <div className="name">{user?.given_name}</div>
+          <div className="name">
+            {user?.given_name} {user?.family_name}
+          </div>
           <div className="name">{""}</div>
           <div className="status-container">
-            <p>Online</p>
+            <p>{user?.isOnline === 1 ? "Online" : "Offline"}</p>
             <div className="status bg-green-500"></div>
           </div>
         </div>
@@ -124,12 +127,12 @@ const ConversationComponent = () => {
       <div className="content">
         {conversations?.length <= 0 && (
           <div className="no-conversation">
-            You haven’t messaged Bruce yet. Say hi to start the conversation!
+            {`You haven’t messaged ${user?.given_name} ${user?.family_name} yet. Say hi to start the conversation!`}
           </div>
         )}
         {conversations?.length > 0 &&
           conversations.map((m: ConversationsI) => {
-            return m?.sender_id == sender_id ? (
+            return m?.sender_id == userData?.user_id ? (
               <MessageRightSide
                 key={m.message_id}
                 content={m?.message}

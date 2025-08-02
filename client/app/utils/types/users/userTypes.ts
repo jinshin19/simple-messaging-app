@@ -3,4 +3,5 @@ export interface userI {
   given_name: string;
   family_name: string;
   picture: string;
+  isOnline: number | boolean;
 }

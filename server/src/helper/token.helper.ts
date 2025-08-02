@@ -28,8 +28,7 @@ export const getAccessToken = (req: Request): string | null => {
   if (typeof value === "string" && value === "null") {
     return null;
   }
-  // return value;
-  return null;
+  return value;
 };
 
 export const getRefreshToken = (req: Request) => {

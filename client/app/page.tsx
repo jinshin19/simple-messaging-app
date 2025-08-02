@@ -7,6 +7,7 @@ import { getUsers } from "./utils/apis/usersApi";
 import { userI } from "./utils/types/users/userTypes";
 import { logoutUser } from "./utils/apis/authApi";
 import { AuthProviderContext } from "./AuthProvider";
+import { socket } from "./socket/socket";
 
 export default function Page() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function Page() {
     try {
       const response = await logoutUser();
       if (response.status === 200) {
+        socket.disconnect();
         localStorage.removeItem("SMA-accessToken");
         router.replace("/signin");
       }
@@ -26,20 +28,29 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getUsers();
-        const data: GenericResponse<any> = await response.json();
+  const fetchData = async () => {
+    try {
+      const response = await getUsers();
+      const data: GenericResponse<any> = await response.json();
 
-        if (data.ok) {
-          setUsers(data.data);
-        }
-      } catch (error: any) {
-        throw new Error(error);
+      if (data.ok) {
+        setUsers(data.data);
       }
-    };
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
+    socket.on("user-status-refresh", (arg: boolean) => {
+      if (arg === true) {
+        fetchData();
+      }
+    });
+    return () => {
+      socket.off("user-status-refresh");
+    };
   }, []);
 
   return (

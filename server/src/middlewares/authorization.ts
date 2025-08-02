@@ -8,7 +8,10 @@ import {
 import { JWT } from "../constants/constants";
 import { API } from "../constants/api.contants";
 import { clearCookie, generateCookie } from "../helper/cookie.helper";
-import { getCurrentUserRefreshToken } from "../helper/user.helper";
+import {
+  getCurrentUserRefreshToken,
+  updateUserStatus,
+} from "../helper/user.helper";
 
 export const validateAuthorization = async (
   req: Request,
@@ -58,6 +61,10 @@ export const validateAuthorization = async (
     const token = !hasPropertyNameOfRefreshToken
       ? validatedTokens?.data?.accessToken
       : validatedTokens?.data?.refreshToken?.accessToken;
+
+    const data = extractTokenData({ token });
+
+    updateUserStatus(data?.user_id, true);
 
     generateCookie({
       res,
