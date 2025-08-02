@@ -8,7 +8,10 @@ import {
 import { JWT } from "../constants/constants";
 import { API } from "../constants/api.contants";
 import { clearCookie, generateCookie } from "../helper/cookie.helper";
-import { getCurrentUserRefreshToken } from "../helper/user.helper";
+import {
+  getCurrentUserRefreshToken,
+  updateUserStatus,
+} from "../helper/user.helper";
 
 export const validateAuthorization = async (req: Request, res: Response) => {
   try {
@@ -72,6 +75,8 @@ export const validateAuthorization = async (req: Request, res: Response) => {
     delete data?.exp;
     delete data?.iat;
 
+    updateUserStatus(data?.user_id, true);
+
     const responseData = {
       ...data,
       accessToken: token,
@@ -98,6 +103,10 @@ export const validateAuthorization = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   try {
+    clearCookie({
+      res,
+      value_name: `SMA-${JWT.NORMALIZE.ACCESS_TOKEN}`,
+    });
     clearCookie({
       res,
       value_name: JWT.NORMALIZE.REFRESH_TOKEN,

@@ -126,7 +126,6 @@ body {
 .dashboard .users-wrapper .users-card .status .circle {
   width: 10px;
   height: 10px;
-  background: green;
   border-radius: 50em;
 }
 .dashboard .dashboard-header .logout-wrapper {

@@ -26,3 +26,9 @@ export const clearCookie = ({ res, value_name }: clearCookieI) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
+
+export const getCookie = (cookie: any, name: string) => {
+  let match = cookie?.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (match) return match[2];
+  return null;
+};

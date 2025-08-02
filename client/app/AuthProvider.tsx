@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import { validateAuthorization } from "./utils/apis/validateApi";
+import { socket } from "./socket/socket";
 
 export const AuthProviderContext = createContext<ProviderContextI>({
   userData: {
@@ -54,6 +55,8 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
         if (response.status === 200) {
           const data = await response.json();
           setUserData(data?.data);
+          socket.emit("user-online", data?.data?.user_id);
+          socket.emit("register", data?.data?.user_id);
         }
       } catch (error) {
         console.log("Error found", {
@@ -64,6 +67,9 @@ const AuthWrapper = ({ children }: { children: ReactNode }) => {
       }
     };
     validate();
+    return () => {
+      socket.off("user-online");
+    };
   }, []);
 
   return (
