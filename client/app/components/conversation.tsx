@@ -120,7 +120,11 @@ const ConversationComponent = () => {
           <div className="name">{""}</div>
           <div className="status-container">
             <p>{user?.isOnline === 1 ? "Online" : "Offline"}</p>
-            <div className="status bg-green-500"></div>
+            <div
+              className={`status ${
+                user?.isOnline === 1 ? "bg-green-500" : "bg-gray-500"
+              }`}
+            ></div>
           </div>
         </div>
       </div>
@@ -131,7 +135,7 @@ const ConversationComponent = () => {
           </div>
         )}
         {conversations?.length > 0 &&
-          conversations.map((m: ConversationsI) => {
+          conversations.map((m: ConversationsI, index: number) => {
             return m?.sender_id == userData?.user_id ? (
               <MessageRightSide
                 key={m.message_id}
@@ -143,6 +147,7 @@ const ConversationComponent = () => {
                 key={m.message_id}
                 content={m?.message}
                 time={m?.sent_time}
+                picture={m?.sender_picture}
               />
             );
           })}
