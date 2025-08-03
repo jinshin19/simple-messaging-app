@@ -5,4 +5,5 @@ interface MessageRightSideI {
 interface MessageLeftSideI {
   content: string;
   time: string;
+  picture: string | null;
 }

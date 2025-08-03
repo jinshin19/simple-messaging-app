@@ -7,6 +7,8 @@ export const MESSAGES_SCRIPT = {
              messages.sender_id as sender_id,
              messages.receiver_id as receiver_id,
              sender.given_name as sender_name,
+             sender.picture as sender_picture,
+             receiver.picture as receiver_picture,
              receiver.given_name as receiver_name,
              messages.message as message,
              messages.created_at as sent_time

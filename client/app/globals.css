@@ -235,7 +235,7 @@ body {
   align-items: baseline;
   width: 100%;
   overflow-y: auto;
-  padding: 1em;
+  /* padding: 1em; */
   position: relative;
 }
 .message-page .message-wrapper .content .no-conversation {
@@ -250,13 +250,18 @@ body {
 .message-page .message-wrapper .content .message-right-side-card,
 .message-page .message-wrapper .content .message-left-side-card {
   width: 100%;
-  padding: 0.5em 0.8em;
+  /* padding: 0.5em 0.8em; */
   /* border: 1px solid rgb(27, 27, 27); */
   border-radius: 10px;
   margin: 1em 0;
 }
 .message-page .message-wrapper .content .message-right-side-card .message,
-.message-page .message-wrapper .content .message-left-side-card .message {
+.message-page
+  .message-wrapper
+  .content
+  .message-left-side-card
+  .message-container
+  .message {
   width: fit-content;
   padding: 0.5em 0.8em;
   border-radius: 10px;
@@ -265,7 +270,6 @@ body {
 .message-page .message-wrapper .content .message-left-side-card .time {
   text-align: center;
   font-size: 12px;
-  padding: 0.5em;
   color: #ffffffd8;
   font-weight: bold;
 }
@@ -273,8 +277,50 @@ body {
   display: flex;
   flex-direction: column;
   margin: 0;
+  padding: 0.5em 0.8em;
 }
-.message-page .message-wrapper .content .message-left-side-card .message {
+.message-page .message-wrapper .content .message-left-side-card {
+  /* outline: 1px solid lime; */
+}
+
+.message-page
+  .message-wrapper
+  .content
+  .message-left-side-card
+  .message-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-page
+  .message-wrapper
+  .content
+  .message-left-side-card
+  .message-container
+  .image {
+  width: 30px;
+  height: 30px;
+  border-radius: 10em;
+  overflow: hidden;
+  position: relative;
+}
+.message-page
+  .message-wrapper
+  .content
+  .message-left-side-card
+  .message-container
+  .image
+  img {
+  width: 100%;
+}
+
+.message-page
+  .message-wrapper
+  .content
+  .message-left-side-card
+  .message-container
+  .message {
   background: rgb(51, 51, 51);
 }
 .message-page .message-wrapper .content .message-right-side-card .message {
